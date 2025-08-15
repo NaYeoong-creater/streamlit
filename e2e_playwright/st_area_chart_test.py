@@ -99,7 +99,7 @@ def test_add_rows_preserves_styling(app: Page, assert_snapshot: ImageCompareFunc
     """Test that add_rows preserves the original styling params (color, width, height,
     use_container_width, stack).
     """
-    add_rows_chart = app.get_by_test_id("stVegaLiteChart").nth(16)
+    add_rows_chart = app.get_by_test_id("stVegaLiteChart").nth(15)
     expect(add_rows_chart).to_be_visible()
 
     # Click the button to add data to the chart
@@ -150,7 +150,7 @@ def test_sequential_custom_colors_under_10(
     # creating flakiness:
     app.wait_for_timeout(10000)
 
-    area_chart_sequential = app.get_by_test_id("stVegaLiteChart").nth(3)
+    area_chart_sequential = app.get_by_test_id("stVegaLiteChart").nth(16)
     expect(area_chart_sequential).to_be_visible()
     assert_snapshot(
         area_chart_sequential, name="custom_chart_colors-sequential_under_10"
@@ -194,7 +194,7 @@ def test_sequential_custom_colors_over_10(
     # creating flakiness:
     app.wait_for_timeout(10000)
 
-    area_chart_sequential = app.get_by_test_id("stVegaLiteChart").nth(3)
+    area_chart_sequential = app.get_by_test_id("stVegaLiteChart").nth(16)
     expect(area_chart_sequential).to_be_visible()
     assert_snapshot(
         area_chart_sequential, name="custom_chart_colors-sequential_over_10"
