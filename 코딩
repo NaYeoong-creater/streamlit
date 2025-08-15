@@ -1,0 +1,56 @@
+import streamlit as st
+from PIL import Image
+import pytesseract
+
+st.title("카메라 또는 이미지 업로드로 음식 인식 및 추천")
+
+# 1. 즉석 카메라 사진 촬영
+img_camera = st.camera_input("카메라로 음식 사진 찍기")
+
+# 2. 이미지 파일 업로드도 가능
+img_file = st.file_uploader("파일로 음식 사진 업로드", type=["jpg", "jpeg", "png"])
+
+# 업로드/촬영된 이미지 선택
+if img_camera is not None:
+    image = Image.open(img_camera)
+    st.image(image, caption='카메라 사진', use_column_width=True)
+elif img_file is not None:
+    image = Image.open(img_file)
+    st.image(image, caption='업로드한 이미지', use_column_width=True)
+else:
+    image = None
+
+# 음식 DB (간단 예시)
+FOOD_DB = {
+    '삼겹살': {'대체': ['목살', '닭갈비']},
+    '목살': {'대체': ['삼겹살', '닭갈비']},
+    '닭갈비': {'대체': ['닭고기', '훈제오리']},
+    '닭고기': {'대체': ['닭갈비']}
+}
+
+def find_food_by_keyword(text, food_db):
+    found_foods = []
+    text_lower = text.lower()
+    for food in food_db:
+        if food.lower() in text_lower:
+            found_foods.append(food)
+    return found_foods
+
+def suggest_alternatives(food_name, food_db):
+    if food_name in food_db:
+        return food_db[food_name].get('대체', [])
+    else:
+        return []
+
+if image is not None:
+    st.info("이미지에서 텍스트 인식(OCR) 중...")
+    text = pytesseract.image_to_string(image, lang='kor+eng')
+    st.write("추출된 텍스트:", text)
+    matches = find_food_by_keyword(text, FOOD_DB)
+    if matches:
+        st.success(f"매칭된 음식: {', '.join(matches)}")
+        for food in matches:
+            alt = suggest_alternatives(food, FOOD_DB)
+            st.write(f"**{food}**의 대체 식품 추천: {', '.join(alt)}")
+    else:
+        st.warning("추출된 텍스트에서 매칭되는 음식이 없습니다.")
